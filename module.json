@@ -1,0 +1,123 @@
+
+  {
+    "name": "Ntfy Sender",
+    "type": "HTTP",
+    "path": "Network",
+  
+    "version": "1.0.0",
+    "description": "Sends Messages and Files to a Ntfy-Server via HTTP.",
+
+      
+    "url":"https://github.com/RGMediatec/Chataigne-module-Ntfy",
+    "downloadURL":"https://github.com/RGMediatec/Chataigne-module-Ntfy/archive/master.zip",
+  
+    "hasInput": true,
+    "hasOutput": true,
+    "hideDefaultCommands": false,
+  
+    "defaults": {
+      "baseAddress": "https://ntfy.sh"
+    },
+  
+"parameters": {
+  "accessToken": { "type": "String", "default": "" },
+  "defaultTopic": { "type": "String", "default": "" },
+  "sendXAccessToken": { "type": "Bool", "default": true },
+  "debug": { "type": "Bool", "default": false }
+},
+  
+    "scripts": [
+      "ntfy.js"
+    ],
+  
+    "commands": {
+      "Send Message": {
+        "label": "Send Message",
+        "description": "Sends text messages",
+        "callback": "sendMessage",
+        "parameters": {
+          "Topic": {
+            "type": "String",
+            "default": ""
+          },
+          "Message": {
+            "type": "String",
+            "default": ""
+          },
+          "Title": {
+            "type": "String",
+            "default": ""
+          },
+          "Priority": {
+            "type": "String",
+            "default": ""
+          },
+          "Tags": {
+            "type": "String",
+            "default": ""
+          },
+          "Click URL": {
+            "type": "String",
+            "default": ""
+          },
+          "Delay": {
+            "type": "String",
+            "default": ""
+          },
+          "Email": {
+            "type": "String",
+            "default": ""
+          },
+          "Custom Headers": {
+            "type": "String",
+            "default": ""
+          }
+        }
+      },
+  
+      "Send File": {
+        "label": "Send File",
+        "description": "Sends a file",
+        "callback": "sendFile",
+        "parameters": {
+          "Topic": {
+            "type": "String",
+            "default": ""
+          },
+          "File Path": {
+            "type": "File",
+            "default": ""
+          },
+          "Title": {
+            "type": "String",
+            "default": ""
+          },
+          "Priority": {
+            "type": "String",
+            "default": ""
+          },
+          "Tags": {
+            "type": "String",
+            "default": ""
+          },
+          "Click URL": {
+            "type": "String",
+            "default": ""
+          },
+          "Delay": {
+            "type": "String",
+            "default": ""
+          },
+          "Email": {
+            "type": "String",
+            "default": ""
+          },
+          "Custom Headers": {
+            "type": "String",
+            "default": ""
+          }
+        }
+      }
+    }
+  }
+  
