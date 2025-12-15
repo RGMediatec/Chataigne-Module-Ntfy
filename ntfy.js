@@ -162,7 +162,6 @@ function init()
 {
   logInfo("module loaded");
 
-  logDebug("sendPUT exists: " + (typeof local.sendPUT));
 }
 
 function moduleParameterChanged(param)
@@ -184,6 +183,8 @@ function getConfig()
 
   var accessToken = trimBasic(readParamValue(pToken));
   var defaultTopic = trimBasic(readParamValue(pTopic));
+
+
   var sendXAccessToken = getBoolParam("sendXAccessToken", true);
 
   return {
@@ -192,6 +193,7 @@ function getConfig()
     sendXAccessToken: sendXAccessToken
   };
 }
+
 
 function normalizeTopicPath(t)
 {
@@ -204,8 +206,8 @@ function normalizeTopicPath(t)
 function resolveTopic(topic, cfg)
 {
   var t = trimBasic(topic);
-  if (!t) t = cfg.defaultTopic;
-
+  if (t == "" || !t) t = cfg.defaultTopic;
+  
   if (!t)
   {
     logInfo("Topic not set (neither command nor defaultTopic)!");
@@ -214,8 +216,9 @@ function resolveTopic(topic, cfg)
   return normalizeTopicPath(t);
 }
 
+
 // *******************
-// Header builder (ntfy-compatible)
+// Header builder
 // *******************
 function buildHeadersForPublish(opts)
 {
@@ -229,12 +232,18 @@ function buildHeadersForPublish(opts)
     if (opts.sendXAccessToken) headers.push("X-Access-Token: " + token);
   }
 
-  if (opts.title) headers.push("Title: " + opts.title);
-  if (opts.priority) headers.push("Priority: " + opts.priority);
-  if (opts.tags) headers.push("Tags: " + opts.tags);
-  if (opts.clickUrl) headers.push("Click: " + opts.clickUrl);
-  if (opts.delay) headers.push("Delay: " + opts.delay);
-  if (opts.email) headers.push("Email: " + opts.email);
+  if (opts.markdown)
+  {
+  headers.push("Markdown: yes");
+  }
+
+
+  headers.push("X-Title: " + opts.title);
+  headers.push("Priority: " + opts.priority);
+  headers.push("X-Tags: " + opts.tags);
+  headers.push("Click: " + opts.clickUrl);
+  headers.push("Delay: " + opts.delay);
+  headers.push("Email: " + opts.email);
 
   if (opts.filename) headers.push("X-Filename: " + opts.filename);
 
@@ -249,10 +258,9 @@ function buildHeadersForPublish(opts)
 // Commands
 // *******************
 
-function sendMessage(topic, message, title, priority, tags, clickUrl, delay, email, customHeaders)
+function sendMessage(topic, message, markdown, title, priority, tags, clickUrl, delay, email, customHeaders)
 {
   logInfo("sendMessage() called");
-
   message = toStr(message);
   if (!message) { logInfo("Message is empty, aborting."); return; }
 
@@ -260,6 +268,8 @@ function sendMessage(topic, message, title, priority, tags, clickUrl, delay, ema
   if (!cfg) return;
 
   var t = resolveTopic(topic, cfg);
+    logDebug("Topic" + t);
+
   if (!t) return;
 
   title = trimBasic(title);
@@ -272,6 +282,7 @@ function sendMessage(topic, message, title, priority, tags, clickUrl, delay, ema
 
   var hdrs = buildHeadersForPublish({
     title: title,
+    markdown: markdown,
     priority: priority,
     tags: tags,
     clickUrl: clickUrl,
@@ -286,12 +297,14 @@ function sendMessage(topic, message, title, priority, tags, clickUrl, delay, ema
 
   logDebug("Headers (redacted):\n" + redactAuth(hdrs));
 
+
   var params = {};
   params.dataType = "text";
   params.extraHeaders = hdrs;
   params.payload = message;
 
   local.sendPOST(t, params);
+
 }
 
 function sendFile(topic, filePath, title, priority, tags, clickUrl, delay, email, customHeaders)
